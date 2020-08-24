@@ -1,0 +1,49 @@
+@import "../../resources/styles/variable.scss";
+@import "../../resources/styles/global.scss";
+
+.homePageWrapper {
+    @include commanPageCss;
+    @include center;
+
+    .loginWrapper {
+        @include center;
+        flex-direction: column;
+        background: #FFFFFF;
+        box-shadow: 0px 4px 10px rgba(5, 62, 209, 0.19);
+        border-radius: 10px;
+        padding: 41px;
+
+        h2 {
+            font-family: Poppins;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 30px;
+            /* identical to box height */
+
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.08em;
+
+            color: #222222;
+            margin: 12px 0;
+        }
+
+        .signIn-btn {
+            width: 320px;
+            height: 50px;
+            background: #0A45C2;
+            border-radius: 4px;
+            font-family: Poppins;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 50px;
+            /* identical to box height */
+
+            text-align: center;
+            letter-spacing: 0.08em;
+            color: white;
+        }
+    }
+}

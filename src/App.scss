@@ -2,5 +2,5 @@
 @import "./resources/styles/variable.scss";
 
 .App {
-  text-align: center;
+  @include commanPageCss;
 }

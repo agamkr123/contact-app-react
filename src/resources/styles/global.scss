@@ -1,0 +1,10 @@
+@mixin commanPageCss {
+    min-height: 100vh;
+}
+
+@mixin  center {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
