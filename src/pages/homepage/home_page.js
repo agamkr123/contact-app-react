@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import './home_page.scss';
 
-import BackgroundComponent from '../../components/background/background_compoenent';
+import { 
+    BackgroundComponent
+} from '../../components';
 import { ReactComponent as GoogleLogo } from '../../resources/images/svgs/image 12.svg';
 
 
