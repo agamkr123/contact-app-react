@@ -1,5 +1,5 @@
 @mixin commanPageCss {
-    min-height: 100vh;
+    //min-height: 100vh;
 }
 
 @mixin  center {
@@ -7,4 +7,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+
+@mixin breakpoint($point) {
+    @if $point == mobileonly {
+      @media (max-width: 420px) { @content; }
+    }
+    @else if $point == desktoponly {
+      @media (min-width: 420px) { @content; }
+    }
 }

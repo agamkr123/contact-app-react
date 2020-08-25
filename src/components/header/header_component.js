@@ -10,6 +10,17 @@ import { ReactComponent as LogoutShape2 } from '../../resources/images/svgs/Shap
 import { ReactComponent as LogoutShape3 } from '../../resources/images/svgs/Shape3.svg';
 
 export default class HeaderComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.onLogoutSuccessHandler = this.onLogoutSuccessHandler.bind(this)
+    }
+
+    onLogoutSuccessHandler() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('profile');
+        this.props.history.push('/home');
+    }
+
   render() {
     return (
         <div className="header-wrapper">
@@ -20,14 +31,16 @@ export default class HeaderComponent extends Component {
             <div className="profile">
                 <div>
                     <img 
-                        src="https://image.shutterstock.com/image-vector/profile-photo-vector-placeholder-pic-600w-535853263.jpg"
+                        src={this.props.image}
                     />
                 </div>
                 <div className="nameDiv">
-                    <p className="name">Agam Kumar</p>
-                    <p className="email">agam.kumar@gmail.com</p>
+                    <p className="name">{this.props.name}</p>
+                    <p className="email">{this.props.email}</p>
                 </div>
-                <div className="logout-btn">
+                <div className="logout-btn"
+                onClick={this.onLogoutSuccessHandler}
+                >
                     <LogoutShape2 className="shape2"/>
                     <LogoutShape3 className="shape3"/>
                     <LogoutShape className="shape"/>

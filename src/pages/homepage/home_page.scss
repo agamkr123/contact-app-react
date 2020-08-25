@@ -4,6 +4,7 @@
 .homePageWrapper {
     @include commanPageCss;
     @include center;
+    height: 100vh;
 
     .loginWrapper {
         @include center;

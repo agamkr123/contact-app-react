@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 
 function App() {
-  const loggedin = localStorage.getItem('token') || true;
+  const loggedin = localStorage.getItem('token');
   return (
     <div className="App">
       <BrowserRouter>
