@@ -7,6 +7,8 @@ import {
 import { ReactComponent as GoogleLogo } from '../../resources/images/svgs/image 12.svg';
 import { GoogleLogin } from 'react-google-login';
 
+import singletonService from '../../services/singleton.service.js';
+
 
 export default class HomePage extends Component {
     constructor(props) {
@@ -16,15 +18,15 @@ export default class HomePage extends Component {
     }
 
     componentDidMount() {
-        if (localStorage.getItem('token')) {
+        if (singletonService.getToken()) {
             this.props.history.push('/contacts');
         }
     }
 
     onLoginSuccessHandle(user) {
         if (user.accessToken && user.profileObj) {
-            localStorage.setItem('token', user.accessToken);
-            localStorage.setItem('profile', JSON.stringify(user.profileObj))
+            singletonService.setToken(user.accessToken);
+            singletonService.setProfile(user.profileObj);
             this.props.history.push('/contacts');
         }
     }
@@ -41,7 +43,7 @@ export default class HomePage extends Component {
                     <GoogleLogo/>
                     <h2>Sign in with Google</h2>
                     <GoogleLogin
-                        clientId="635142790754-m4pd146igpdu45jdte48iji31mnu2pdr.apps.googleusercontent.com"
+                        clientId={singletonService.getGoogleId()}
                         buttonText="Login"
                         onSuccess={this.onLoginSuccessHandle}
                         onFailure={this.onLoginFailureHandle}

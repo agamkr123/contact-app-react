@@ -9,6 +9,8 @@ import { ReactComponent as LogoutShape } from '../../resources/images/svgs/Shape
 import { ReactComponent as LogoutShape2 } from '../../resources/images/svgs/Shape2.svg';
 import { ReactComponent as LogoutShape3 } from '../../resources/images/svgs/Shape3.svg';
 
+import singletonService from '../../services/singleton.service.js';
+
 export default class HeaderComponent extends Component {
     constructor(props) {
         super(props);
@@ -18,6 +20,8 @@ export default class HeaderComponent extends Component {
     onLogoutSuccessHandler() {
         localStorage.removeItem('token');
         localStorage.removeItem('profile');
+        singletonService.setToken("");
+        singletonService.setProfile({});
         this.props.history.push('/home');
     }
 
@@ -32,6 +36,7 @@ export default class HeaderComponent extends Component {
                 <div>
                     <img 
                         src={this.props.image}
+                        onError={(event) => {event.target.src="https://image.shutterstock.com/image-vector/profile-photo-vector-placeholder-pic-600w-535853263.jpg"}}
                     />
                 </div>
                 <div className="nameDiv">

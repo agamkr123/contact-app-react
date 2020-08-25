@@ -45,6 +45,11 @@
             text-align: center;
             letter-spacing: 0.08em;
             color: white;
+            @include breakpoint('mobileonly') {
+                width: 200px;
+                height: 40px;
+                line-height: 40px;
+            }
         }
     }
 }

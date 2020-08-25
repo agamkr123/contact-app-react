@@ -9,41 +9,44 @@ import {
     HeaderComponent
 } from '../../components';
 
+import singletonService from '../../services/singleton.service.js';
+
+
 var xmlConverter = require('xml-js');
 
 export default class HomePage extends Component {
     constructor(props) {
         super(props);
-        const token = localStorage.getItem('token') || "";
-        const profile = localStorage.getItem('profile') || "";
-        if (token && profile) {
-            const profileObj = JSON.parse(profile);
-            this.state = {
-                data : [
-                ],
-                profile : profileObj,
-                token : token,
-                images : {}
-            }
-        } else {
-            this.props.history.push('/home');
-            this.state = {
-                data : [],
-                profile : {},
-                token : "",
-                images : {}
-            }
+        this.state = {
+            data : [],
+            profile : {},
+            token : "",
+            images : {}
         }
     }
 
     componentDidMount() {
-        this.fetchContact();
+        const token = singletonService.getToken();
+        const profile = singletonService.getProfile();
+        //console.log('testing', token, profile);
+        if (token) {
+            this.setState({
+                data : [
+                ],
+                profile : profile,
+                token : token,
+                images : {}
+            })
+            this.fetchContact(token, profile);
+        } else {
+            this.props.history.push('/home')
+        }
     }
     
-    fetchContact() {
-        fetch(`https://content.googleapis.com/m8/feeds/contacts/${this.state.profile.email}/full?max-results=100`, {
+    fetchContact(token, profile) {
+        fetch(`https://content.googleapis.com/m8/feeds/contacts/${profile.email}/full?max-results=100`, {
         "headers": {
-            "authorization": `Bearer ${this.state.token}`,
+            "authorization": `Bearer ${token}`,
         },
         "body": null,
         "method": "GET",
@@ -53,38 +56,51 @@ export default class HomePage extends Component {
                 const json = JSON.parse(xmlConverter.xml2json(str, {compact: true}));
                 if (json.feed.entry) {
                     const data = json.feed.entry.map(data => {
-                        console.log(data)
-                        if (data.link[1]) {
-                            fetch(data.link[1]._attributes.href, {
-                                "headers": {
-                                    "authorization": `Bearer ${this.state.token}`,
-                                },
-                                "body": null,
-                                "method": "GET",
-                            }).then(async dataImage => {
-                                const blob = await dataImage.blob();
-                                console.log(blob);
-                                this.setState({
-                                    images : {
-                                        ...this.state.images,
-                                        [data["gd:email"]._attributes.address] : URL.createObjectURL(blob)
-                                    }
+                        let href = "";
+                        if (data.link && Array.isArray(data.link)) {
+                            data.link.forEach(element => {
+                                if (element._attributes.type && 
+                                    element._attributes.type == 'image/*' &&
+                                    element._attributes.rel == 'http://schemas.google.com/contacts/2008/rel#photo') {
+                                        href = element._attributes.href;
+                                }
+                            });
+                        }
+                        //console.log(href, data);
+                        if (href) {
+                            setTimeout(() => {
+                                fetch(href, {
+                                    "headers": {
+                                        "authorization": `Bearer ${this.state.token}`,
+                                    },
+                                    "body": null,
+                                    "method": "GET",
+                                }).then(async dataImage => {
+                                    const blob = await dataImage.blob();
+                                    //console.log(blob);
+                                    this.setState({
+                                        images : {
+                                            ...this.state.images,
+                                            [data.id._text] : URL.createObjectURL(blob)
+                                        }
+                                    })
                                 })
-                            })
+                            },0)
                         }
                         return {
                             name : data.title._text || "",
-                            email : data["gd:email"] ?   data["gd:email"]._attributes.address : "",
-                            phoneNo : data["gd:phoneNumber"] ?   data["gd:phoneNumber"]._attributes.address : "",
-                            link : "https://image.shutterstock.com/image-vector/profile-photo-vector-placeholder-pic-600w-535853263.jpg"
+                            email : data["gd:email"] && data["gd:email"]._attributes ?   data["gd:email"]._attributes.address : "",
+                            phoneNo : data["gd:phoneNumber"] ?   data["gd:phoneNumber"]._text : "",
+                            link : "https://image.shutterstock.com/image-vector/profile-photo-vector-placeholder-pic-600w-535853263.jpg",
+                            id : data.id ? data.id._text : ""
                         }
                     });
                     this.setState({
                         data : data
                     })
-                    console.log(data);
+                    //console.log(data);
                 }
-            }catch(e) {}
+            }catch(e) {console.log(e)}
         });
     }
     
@@ -95,9 +111,9 @@ export default class HomePage extends Component {
             <div className="row" key={index}>
                 <span className="name">
                     <div className="checkbox" />
-                    <img src={this.state.images[data.email] ? this.state.images[data.email] : data.link}
+                    <img src={this.state.images[data.id] ? this.state.images[data.id] : data.link}
                     onError={(event) => {event.target.src="https://image.shutterstock.com/image-vector/profile-photo-vector-placeholder-pic-600w-535853263.jpg"}} />
-                    <div>{data.name.length > 10 ? data.name.substr(0, 10) + '...' : data.name}</div>
+                    <div>{data.name.length > 20 ? data.name.substr(0, 20) + '...' : data.name}</div>
                 </span>
                 <span className="email">{data.email}</span>
                 <span className="phone-no">

@@ -12,13 +12,12 @@ import {
 } from 'react-router-dom';
 
 function App() {
-  const loggedin = localStorage.getItem('token');
   return (
     <div className="App">
       <BrowserRouter>
        <Switch>
         <Route path="/home" exact component={Homepage} />
-        { loggedin && <Route path="/contacts" exact component={ContactPage} /> }
+        <Route path="/contacts" exact component={ContactPage} />
         <Redirect to="/home" />
        </Switch>
       </BrowserRouter>
